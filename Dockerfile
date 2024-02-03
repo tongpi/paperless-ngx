@@ -5,6 +5,11 @@
 # Purpose: Compiles the frontend
 # Notes:
 #  - Does NPM stuff with Typescript and such
+
+#
+# to using local image ,run：
+# docker  build --platform amd64  --tag cc/paperless:local  .  --build-arg HTTP_PROXY=http://192.168.200.24:7890 --build-arg HTTPS_PROXY=http://192.168.200.24:7890 --build-arg BUILDPLATFORM=linux/amd64 --build-arg TARGETARCH=amd64 
+
 ARG BUILDPLATFORM
 FROM --platform=$BUILDPLATFORM docker.io/node:20-bookworm-slim AS compile-frontend
 
@@ -114,7 +119,11 @@ ARG RUNTIME_PACKAGES="\
 RUN set -eux \
   echo "Installing system packages" \
     && apt-get update \
-    && apt-get install --yes --quiet --no-install-recommends ${RUNTIME_PACKAGES} \
+    && apt-get install --yes --quiet --no-install-recommends ${RUNTIME_PACKAGES} 
+RUN set -eux \
+  echo "Installing system packages" \
+    # && apt-get update \
+    # && apt-get install --yes --quiet --no-install-recommends ${RUNTIME_PACKAGES} \
     && echo "Installing pre-built updates" \
       && echo "Installing qpdf ${QPDF_VERSION}" \
         && curl --fail --silent --show-error --location \
@@ -219,13 +228,18 @@ RUN --mount=type=cache,target=/root/.cache/pip/,id=pip-cache \
   && echo "Installing build system packages" \
     && apt-get update \
     && apt-get install --yes --quiet --no-install-recommends ${BUILD_PACKAGES} \
-    && python3 -m pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --no-cache-dir --upgrade wheel \
+    && python3 -m pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --no-cache-dir --upgrade wheel 
+RUN --mount=type=cache,target=/root/.cache/pip/,id=pip-cache \
+  set -eux \
   && echo "Installing Python requirements" \
+    && python3 -m pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --default-timeout=1000 requests \
     && python3 -m pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --default-timeout=1000 --requirement requirements.txt \
   && echo "Patching whitenoise for compression speedup" \
     && curl --fail --silent --show-error --location --output 484.patch https://github.com/evansd/whitenoise/pull/484.patch \
     && patch -d /usr/local/lib/python3.11/site-packages --verbose -p2 < 484.patch \
-    && rm 484.patch \
+    && rm 484.patch 
+RUN --mount=type=cache,target=/root/.cache/pip/,id=pip-cache \
+  set -eux \    
   && echo "Installing NLTK data" \
     && python3 -W ignore::RuntimeWarning -m nltk.downloader -d "/usr/share/nltk_data" snowball_data \
     && python3 -W ignore::RuntimeWarning -m nltk.downloader -d "/usr/share/nltk_data" stopwords \
