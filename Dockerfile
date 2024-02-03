@@ -30,7 +30,7 @@ COPY Pipfile* ./
 
 RUN set -eux \
   && echo "Installing pipenv" \
-    && python3 -m pip install --no-cache-dir --upgrade pipenv==2023.11.15 \
+    && python3 -m pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --no-cache-dir --upgrade pipenv==2023.11.15 \
   && echo "Generating requirement.txt" \
     && pipenv requirements > requirements.txt
 
@@ -147,7 +147,7 @@ RUN set -eux \
         && rm --force --verbose *.deb \
     && rm --recursive --force --verbose /var/lib/apt/lists/* \
   && echo "Installing supervisor" \
-    && python3 -m pip install --default-timeout=1000 --upgrade --no-cache-dir supervisor==4.2.5
+    && python3 -m pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --default-timeout=1000 --upgrade --no-cache-dir supervisor==4.2.5
 
 # Copy gunicorn config
 # Changes very infrequently
@@ -219,9 +219,9 @@ RUN --mount=type=cache,target=/root/.cache/pip/,id=pip-cache \
   && echo "Installing build system packages" \
     && apt-get update \
     && apt-get install --yes --quiet --no-install-recommends ${BUILD_PACKAGES} \
-    && python3 -m pip install --no-cache-dir --upgrade wheel \
+    && python3 -m pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --no-cache-dir --upgrade wheel \
   && echo "Installing Python requirements" \
-    && python3 -m pip install --default-timeout=1000 --requirement requirements.txt \
+    && python3 -m pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --default-timeout=1000 --requirement requirements.txt \
   && echo "Patching whitenoise for compression speedup" \
     && curl --fail --silent --show-error --location --output 484.patch https://github.com/evansd/whitenoise/pull/484.patch \
     && patch -d /usr/local/lib/python3.11/site-packages --verbose -p2 < 484.patch \
