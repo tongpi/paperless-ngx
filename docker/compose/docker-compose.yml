@@ -63,6 +63,8 @@ services:
       - media:/usr/src/paperless/media
       - ./export:/usr/src/paperless/export
       - ./consume:/usr/src/paperless/consume
+      - ./scripts:/usr/src/paperless/scripts
+      - ./docker/compose/custom-container-scripts:/custom-cont-init.d:ro      
     env_file: docker-compose.env
     environment:
       PAPERLESS_REDIS: redis://broker:6379
