@@ -29,6 +29,9 @@
 #
 # For more extensive installation and update instructions, refer to the
 # documentation.
+#
+# to using local image ,run：
+# docker  build --platform amd64  --tag cc/paperless:local  .  --build-arg HTTP_PROXY=http://192.168.200.24:7890 --build-arg HTTPS_PROXY=http://192.168.200.24:7890 --build-arg BUILDPLATFORM=linux/amd64 --build-arg TARGETARCH=amd64 
 
 version: "3.4"
 services:
@@ -49,7 +52,8 @@ services:
       POSTGRES_PASSWORD: paperless
 
   webserver:
-    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    # image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    image: cc/paperless:local
     restart: unless-stopped
     depends_on:
       - db
