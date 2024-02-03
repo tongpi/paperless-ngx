@@ -101,3 +101,9 @@ Please see [the wiki](https://github.com/paperless-ngx/paperless-ngx/wiki/Affili
 
 > Document scanners are typically used to scan sensitive documents like your social insurance number, tax records, invoices, etc. **Paperless-ngx should never be run on an untrusted host** because information is stored in clear text without encryption. No guarantees are made regarding security (but we do try!) and you use the app at your own risk.
 > **The safest way to run Paperless-ngx is on a local server in your own home with backups in place**.
+
+# Builder
+
+```shell
+docker  build --platform amd64  --tag paperless:local  .  --build-arg HTTPS_PROXY=http://192.168.200.24:7890 --build-arg BUILDPLATFORM=linux/amd64 --build-arg TARGETARCH=amd64
+```
